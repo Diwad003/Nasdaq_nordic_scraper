@@ -8,7 +8,7 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36'
 }
 
-url = 'http://www.nasdaqomxnordic.com/shares/listed-companies/nordic-large-cap'
+url = 'https://www.nasdaqomxnordic.com/shares/listed-companies/stockholm'
 
 r = requests.get(url, headers=headers)
 table = bs(r.text, 'html.parser').select_one('table#listedCompanies')

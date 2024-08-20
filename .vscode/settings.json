@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "nasdaq_handler.h": "c",
+        "string_library.h": "c",
+        "xmemory": "c",
+        "xutility": "c"
+    }
+}

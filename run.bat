@@ -1,0 +1,1 @@
+python3 .\CompanyListScraper.py https://www.nasdaqomxnordic.com/shares/listed-companies/stockholm output.txt

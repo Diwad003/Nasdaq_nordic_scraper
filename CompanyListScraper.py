@@ -18,7 +18,7 @@ def get_and_process_url_data(input_url, output_file):
             lines = [line for line in r.text.splitlines() if line.strip() != ""]
 
             # Keep lines from 595 to 3671 (0-based indexing)
-            lines_to_write = lines[594:3671]
+            lines_to_write = lines[593:3671]
 
             # Write the filtered content to the output file
             with open(output_file, 'w', encoding='utf-8') as outfile:
@@ -30,7 +30,7 @@ def get_and_process_url_data(input_url, output_file):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-if __name__ == "__main__":
+if __name__ == "__main__": #Check if in main or some shit?
     # Set up argument parser
     parser = argparse.ArgumentParser(description='Fetch content from a URL and process it.')
     parser.add_argument('input_url', type=str, help='The URL to fetch content from')

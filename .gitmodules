@@ -1,0 +1,3 @@
+[submodule "CLibraries"]
+	path = CLibraries
+	url = git@github.com:Diwad003/CLibraries.git

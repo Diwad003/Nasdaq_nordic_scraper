@@ -30,7 +30,7 @@ def get_and_process_url_data(input_url, output_file):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-if __name__ == "__main__": #Check if in main or some shit?
+if __name__ == "__main__":
     # Set up argument parser
     parser = argparse.ArgumentParser(description='Fetch content from a URL and process it.')
     parser.add_argument('input_url', type=str, help='The URL to fetch content from')

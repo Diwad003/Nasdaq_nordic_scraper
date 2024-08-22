@@ -27,7 +27,7 @@ def get_company_name(url, dir):
 
                 i += 1
                 outputCompanySymbol = extract_between_value(lines[i], '>', '<')
-                fpName = "info/%s.txt" % outputCompanySymbol
+                fpName = f"{dir}/{outputCompanySymbol}.txt"
                 fp = open(fpName, "w")
                 fp.write("%s\n" % outputForwardLink)
                 fp.write("%s\n" % outputCompanySymbol)
@@ -69,7 +69,6 @@ def get_company_info(dir):
     dir_list = os.listdir(dir)
     for textfile in dir_list:
         combineDir = dir + textfile
-    #combineDir = dir + dir_list[0]
         outfile = open(combineDir, 'r', encoding='utf-8')
         str = outfile.readline()
         outfile.close()
@@ -77,10 +76,10 @@ def get_company_info(dir):
         websiteLink = [line for line in str.splitlines() if line.strip()]
         websiteLink = "https://www.nasdaqomxnordic.com" + websiteLink[0]
         print(websiteLink)
-        price, shares, volume = download_website(websiteLink)
+        price, shares, volume, numTrades = download_website(websiteLink)
 
         outfile = open(combineDir, 'a', encoding='utf-8')
-        outfile.write("%s\n%s\n%s\n" % (price, shares, volume))
+        outfile.write("%s\n%s\n%s\n%s\n" % (price, shares, volume, numTrades))
         outfile.close()
 
         
@@ -95,35 +94,45 @@ def download_website(url):
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
     driver.get(url)
-    time.sleep(1)  # Wait for the page to fully load
+    time.sleep(2)  # Wait for the page to fully load
 
     lines = [line for line in driver.page_source.splitlines() if line.strip()]
-    with open("temp.txt", 'w', encoding='utf-8') as outfile:
-        for line in lines:
-            outfile.write(line + '\n')  
+    #with open("temp.txt", 'w', encoding='utf-8') as outfile:
+    #    for line in lines:
+    #        outfile.write(line + '\n') 
     driver.quit()
     
 
     outputPrice = extract_between_value(lines[552], ">", "<")
     outputShares = extract_between_value(lines[561], r'nos">', "</span")
-    #TODO BUG FOUND, if information doesnt exist it breaks. The stock https://www.nasdaqomxnordic.com/shares/microsite?Instrument=SSE834 doesnt have volume
     outputVolume = extract_between_value(lines[619], r'"tv">', "</span>")
-    
+    outputNumberOfTrades = extract_between_value(lines[627], r'"not">', "</span>")
 
     priceString = outputPrice.replace(',', '', 1)
     priceInt = float(priceString.replace(',', '.'))
-    sharesInt = int(outputShares.replace(',', ''))
-    volumeInt = int(outputVolume.replace(',', ''))
+    
+    sharesInt = 0
+    volumeInt = 0
+    volumeNumTrades = 0
+    if outputShares and outputShares != "&nbsp;":
+        sharesInt = int(outputShares.replace(',', ''))
+    if outputVolume and outputVolume != "&nbsp;":
+        volumeInt = int(outputVolume.replace(',', ''))
+    if outputNumberOfTrades and outputNumberOfTrades != "&nbsp;":
+        volumeNumTrades = int(outputNumberOfTrades.replace(',', ''))
 
+    print("\n")
     print(priceInt)
     print(sharesInt)
     print(volumeInt)
+    print(volumeNumTrades)
+    print("\n")
 
     if not isinstance(priceInt, float) or not isinstance(sharesInt, int) or not isinstance(volumeInt, int):
         print("Price, shares eller volume är inte ints")
         exit(1)
     
-    return priceInt, sharesInt, volumeInt
+    return priceInt, sharesInt, volumeInt, volumeNumTrades
 
 
 if __name__ == "__main__":
@@ -132,5 +141,13 @@ if __name__ == "__main__":
     parser.add_argument('directory', type=str, help='The URL to fetch content from')
     args = parser.parse_args()
 
+    start = time.time()
     get_company_name(args.input_url, args.directory) # https://www.nasdaqomxnordic.com/shares/listed-companies/stockholm
     get_company_info(args.directory)
+    end = time.time()
+    elapsed_time = end-start
+
+    hours = int(elapsed_time // 3600)
+    minutes = int((elapsed_time % 3600) // 60)
+    seconds = int(elapsed_time % 60)
+    print(f"Time taken: {hours} hours, {minutes} minutes, and {seconds} seconds")

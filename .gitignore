@@ -1,7 +1,7 @@
 *.exe
 *.txt
 old_python_scripts/
-info/
+data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
